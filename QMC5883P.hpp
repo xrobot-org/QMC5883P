@@ -42,7 +42,7 @@ depends: []
 
 // ----- I2C address (7-bit) -----
 // QMC5883P 默认 7-bit 地址 0x2C，这里沿用你的 I2C 封装，用 8-bit 地址写法
-#define QMC5883P_I2C_ADDR         (0x2C << 1)
+#define QMC5883P_I2C_ADDR         (0x2C) // raw 7-bit address
 
 // ----- Status bits -----
 #define QMC5883P_STATUS_DRDY      (1u << 0)
