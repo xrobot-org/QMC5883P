@@ -71,7 +71,7 @@ public:
            LibXR::Quaternion<float> &&rotation, const char *topic_name,
            size_t task_stack_depth)
       : rotation_(std::move(rotation)),
-        topic_mag_(topic_name, sizeof(mag_data_)),
+        topic_mag_(LibXR::Topic::CreateTopic<decltype(mag_data_)>(topic_name)),
         i2c_(hw.template FindOrExit<LibXR::I2C>({"i2c_qmc5883p"})),
         op_i2c_read_(sem_i2c_), op_i2c_write_(sem_i2c_),
         cmd_file_(LibXR::RamFS::CreateFile("qmc5883p", CommandFunc, this)) {
