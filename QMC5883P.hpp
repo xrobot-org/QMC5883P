@@ -61,17 +61,20 @@ depends: []
 class QMC5883P
 {
  public:
-  QMC5883P(LibXR::I2C& external_i2c_qmc5883p, LibXR::RamFS& external_ramfs,
-           LibXR::Quaternion<float>&& rotation, const char* topic_name,
-           size_t task_stack_depth)
+  QMC5883P(
+      LibXR::I2C& i2c,
+      LibXR::RamFS& ramfs,
+      LibXR::Quaternion<float>&& rotation = {1.0f, 0.0f, 0.0f, 0.0f},
+      const char* topic_name = "qmc5883p_mag",
+      size_t task_stack_depth = 1536)
       : rotation_(std::move(rotation)),
         topic_mag_(LibXR::Topic::CreateTopic<decltype(mag_data_)>(topic_name)),
-        i2c_(std::addressof(external_i2c_qmc5883p)),
+        i2c_(std::addressof(i2c)),
         op_i2c_read_(sem_i2c_),
         op_i2c_write_(sem_i2c_),
         cmd_file_(LibXR::RamFS::CreateFile("qmc5883p", CommandFunc, this))
   {
-    external_ramfs.Add(cmd_file_);
+    ramfs.Add(cmd_file_);
 
     while (!Init())
     {
