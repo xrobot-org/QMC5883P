@@ -12,6 +12,7 @@ depends: []
 #include <memory>
 
 #include "i2c.hpp"
+#include "logger.hpp"
 #include "message.hpp"
 #include "ramfs.hpp"
 #include "thread.hpp"
