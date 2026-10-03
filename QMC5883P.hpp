@@ -276,8 +276,8 @@ class QMC5883P
    *             Argument count.
    * @param argv 参数列表。
    *             Argument list.
-   * @return 命令返回值，恒为 0。
-   *         Command return value, always 0.
+   * @return 成功为 0，interval_ms 不大于 0 为 -1。
+   *         0 on success, -1 when interval_ms is not greater than 0.
    */
   static int CommandFunc(QMC5883P* sensor, int argc, char** argv)
   {
@@ -292,6 +292,11 @@ class QMC5883P
     {
       int time_ms = atoi(argv[2]);
       int interval_ms = atoi(argv[3]);
+      if (interval_ms <= 0)
+      {
+        LibXR::STDIO::Printf<"Error: interval_ms must be greater than 0.\r\n">();
+        return -1;
+      }
       for (int i = 0; i < time_ms / interval_ms; i++)
       {
         LibXR::Thread::Sleep(interval_ms);
