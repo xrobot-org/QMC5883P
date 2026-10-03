@@ -72,7 +72,7 @@ An instance written by `xrobot instance add xrobot-org/QMC5883P`, with `i2c` and
 ```yaml
 modules:
   - module: xrobot-org/QMC5883P
-    id: qmc5883p
+    id: qmc5883p_0
     args:
       - i2c: i2c1
       - ramfs: ramfs
