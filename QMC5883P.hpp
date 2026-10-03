@@ -2,7 +2,7 @@
 
 // clang-format off
 /* === MODULE MANIFEST V2 ===
-module_description: QST QMC5883P 三轴磁力计驱动模块 / Driver module for QMC5883P 3-axis magnetometer
+module_description: QST QMC5883P 三轴磁力计驱动模块 / Driver module for the QST QMC5883P 3-axis magnetometer
 depends: []
 === END MANIFEST === */
 // clang-format on
@@ -34,7 +34,7 @@ depends: []
 #define QMC5883P_REG_AXIS_CFG 0x29  // 轴符号配置，datasheet 示例写 0x06
 
 // ----- I2C address (7-bit) -----
-// QMC5883P 默认 7-bit 地址 0x2C，这里沿用你的 I2C 封装，用 8-bit 地址写法
+// QMC5883P 的 7 位地址为 0x2C
 #define QMC5883P_I2C_ADDR (0x2C)  // raw 7-bit address
 
 // ----- Status bits -----
@@ -89,7 +89,7 @@ class QMC5883P
 
   bool Init()
   {
-    // 电源稳定 / POR 完成，datasheet 要求 PORT >= 250us，这里直接等 1ms
+    // 等待上电复位完成，datasheet 要求 PORT >= 250 us，取 1 ms
     LibXR::Thread::Sleep(1);
 
     // 检查 CHIPID，QMC5883P 在 0x00 处默认值 0x80
@@ -109,7 +109,7 @@ class QMC5883P
     // Normal mode, ±8G, ODR=200Hz，高 OSR（CTRL1 = 0xCD）
     WriteReg(QMC5883P_REG_CTRL1, QMC5883P_CTRL1_NORMAL_8G_200HZ);
 
-    // 稍微等一会儿让内部完成第一次转换
+    // 等待内部完成第一次转换
     LibXR::Thread::Sleep(5);
 
     return true;
@@ -117,7 +117,7 @@ class QMC5883P
 
   static void ThreadFunc(QMC5883P* sensor)
   {
-    // 没有外部 DRDY 引脚，只能轮询状态寄存器
+    // 轮询状态寄存器获取数据就绪状态
     while (true)
     {
       // 200Hz ODR -> 5ms 一次新数据，这里用 5ms 周期轮询
@@ -136,11 +136,6 @@ class QMC5883P
         sensor->ReadMagnetometer();
         sensor->ParseMagData();
         sensor->topic_mag_.Publish(sensor->mag_data_);
-      }
-      else
-      {
-        // 如果长时间都没等到，可以在 OnMonitor 里统一告警，这里保持安静或偶尔打印
-        // XR_LOG_WARN("QMC5883P: DRDY not ready.\r\n");
       }
     }
   }
@@ -164,7 +159,7 @@ class QMC5883P
       return;
     }
 
-    // 单位：mG；如需 μT 可乘以 0.1
+    // 单位：mG
     Eigen::Matrix<float, 3, 1> vec;
     vec[0] = raw[0] * QMC5883P_SCALE_MG_PER_LSB;
     vec[1] = raw[1] * QMC5883P_SCALE_MG_PER_LSB;
