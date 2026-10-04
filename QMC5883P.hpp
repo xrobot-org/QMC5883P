@@ -2,7 +2,7 @@
 
 // clang-format off
 /* === MODULE MANIFEST V2 ===
-module_description: QST QMC5883P 三轴磁力计驱动模块 / Driver module for the QST QMC5883P 3-axis magnetometer
+module_description: QST QMC5883P 三轴磁力计驱动模块 / Driver Module for the QST QMC5883P 3-axis magnetometer
 depends: []
 === END MANIFEST === */
 // clang-format on
